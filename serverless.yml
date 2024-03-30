@@ -70,6 +70,11 @@ functions:
           path: /auction/{id}/bid
     url: true
 
+  processAuctions:
+    handler: src/handlers/processAuctions.handler
+    # events:
+    #   - schedule: rate(1 minute)
+
 custom:
   AuctionsTable:
     name: !Ref AuctionsTable
