@@ -4,11 +4,28 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
+import schema from "../lib/schemas/getAuctionsSchema";
+const Ajv = require('ajv');
+const ajv = new Ajv();
+
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function getAuctions(event, context) {
-  const {status} = event.queryStringParameters;
+  const queryParams = event.queryStringParameters || {};
+
+  const validate = ajv.compile(schema);
+
+    // Validate the query parameters against the schema
+    const isValid = validate(queryParams);
+    if (!isValid) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: 'Invalid query parameters' })
+      };
+    };
+
+
   let auctions;
 
   const params = {
@@ -16,7 +33,7 @@ async function getAuctions(event, context) {
     IndexName: 'statusAndEndDate',
     KeyConditionExpression: '#status = :status',
     ExpressionAttributeValues: {
-      ':status': status
+      ':status': queryParams.status
     },
     ExpressionAttributeNames: {
       '#status': 'status'

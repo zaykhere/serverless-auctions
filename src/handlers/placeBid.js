@@ -5,10 +5,22 @@ import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
 import { getAuctionById } from "./getAuction";
+import schema from "../lib/schemas/placeBidSchema";
+const Ajv = require('ajv');
+const ajv = new Ajv();
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function placeBid(event, context) {
+  const validate = ajv.compile(schema);
+  const isValid = validate(event.body);
+  if (!isValid) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Invalid request body' })
+    };
+  }
+
   const {id} = event.pathParameters;
   const {amount} = event.body;
 
