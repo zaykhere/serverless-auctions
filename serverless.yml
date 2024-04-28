@@ -32,13 +32,17 @@ provider:
   environment:
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
     MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
+    AUCTIONS_BUCKET_NAME: ${self:custom.AuctionsBucket.name}
   iamRoleStatements:
     - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
     - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+    - ${file(iam/AuctionsBucketIAM.yml):AuctionsBucketIAM}
 
 resources:
   Resources:
     AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
+    AuctionsBucket: ${file(resources/AuctionsBucket.yml):AuctionsBucket}
+    AuctionsBucketPolicy: ${file(resources/AuctionsBucket.yml):AuctionsBucketPolicy}
 
 functions:
   createAuction:
@@ -76,6 +80,15 @@ functions:
           authorizer: ${self:custom.authorizer}
     url: true
 
+  uploadAuctionPicture:
+    handler: src/handlers/uploadAuctionPicture.handler
+    events:
+      - http:
+          method: PATCH
+          path: /auction/{id}/picture
+          authorizer: ${self:custom.authorizer}
+    url: true
+
   processAuctions:
     handler: src/handlers/processAuctions.handler
     # events:
@@ -89,5 +102,7 @@ custom:
   MailQueue:
     arn: ${cf:auction-notification-service-${self:provider.stage}.MailQueueArn}
     url: ${cf:auction-notification-service-${self:provider.stage}.MailQueueUrl}
+  AuctionsBucket:
+    name: ztd-auctions-bucker-${self:provider.stage}
   bundle:
     linting: false
