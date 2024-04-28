@@ -4,6 +4,7 @@ import middy from "@middy/core";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
 import { setAuctionPictureUrl } from "../lib/setAuctionPictureUrl";
+import { isValidBase64 } from "../lib/isValidBase64";
 
 export async function uploadAuctionPicture(event) {
   const { id } = event.pathParameters;
@@ -11,6 +12,10 @@ export async function uploadAuctionPicture(event) {
 
   const auction = await getAuctionById(id);
   const base64 = event.body;
+
+  if(!base64 || !isValidBase64(base64)) {
+    throw new createError.BadRequest('Please provide a valid image');
+  }
 
   if(email !== auction.seller) {
     throw new createError.Forbidden('Only the seller of the auction can upload image');
