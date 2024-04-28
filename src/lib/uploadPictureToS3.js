@@ -11,5 +11,5 @@ export async function uploadPictureToS3(key, body, format) {
     ContentType: format,
   }).promise();
 
-  return result;
+  return result.Location;
 }

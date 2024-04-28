@@ -3,6 +3,7 @@ import { uploadPictureToS3 } from "../lib/uploadPictureToS3";
 import middy from "@middy/core";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
+import { setAuctionPictureUrl } from "../lib/setAuctionPictureUrl";
 
 export async function uploadAuctionPicture(event) {
   const { id } = event.pathParameters;
@@ -15,9 +16,12 @@ export async function uploadAuctionPicture(event) {
 
   const buffer = Buffer.from(base64String,'base64');
 
+  let updatedAuction;
+
   try {
-    const uploadToS3Result = await uploadPictureToS3(auction.id + '.jpg', buffer, format);
-    console.log(uploadToS3Result);
+    const imageUrl = await uploadPictureToS3(auction.id + '.jpg', buffer, format);
+    updatedAuction = await setAuctionPictureUrl(auction.id, imageUrl);
+
   } catch (error) {
     console.error(error);
     throw new createError.InternalServerError(error);
@@ -26,7 +30,7 @@ export async function uploadAuctionPicture(event) {
 
   return {
     statusCode: 200,
-    body: JSON.stringify({})
+    body: JSON.stringify(updatedAuction)
   }
 }
 
