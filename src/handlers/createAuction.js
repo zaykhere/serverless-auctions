@@ -5,6 +5,7 @@ import httpJsonBodyParser from "@middy/http-json-body-parser";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
+import cors from "@middy/http-cors";
 import schema from "../lib/schemas/createAuctionSchema";
 const Ajv = require('ajv');
 const ajv = new Ajv();
@@ -65,5 +66,6 @@ export const handler = middy(createAuction)
   .use(httpJsonBodyParser())
   .use(httpEventNormalizer())
   .use(httpErrorHandler())
+  .use(cors())
 
 

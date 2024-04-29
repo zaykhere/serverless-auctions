@@ -6,6 +6,7 @@ import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
 import { getAuctionById } from "./getAuction";
 import schema from "../lib/schemas/placeBidSchema";
+import cors from "@middy/http-cors";
 const Ajv = require('ajv');
 const ajv = new Ajv();
 
@@ -74,5 +75,6 @@ export const handler = middy(placeBid)
   .use(httpJsonBodyParser())
   .use(httpEventNormalizer())
   .use(httpErrorHandler())
+  .use(cors())
 
 

@@ -51,6 +51,7 @@ functions:
       - http:
           method: POST
           path: /auction
+          cors: true
           authorizer: ${self:custom.authorizer}
     url: true
   getAuctions:
@@ -59,6 +60,7 @@ functions:
       - http:
           method: GET
           path: /auctions
+          cors: true
           authorizer: ${self:custom.authorizer}
     url: true
 
@@ -68,6 +70,7 @@ functions:
       - http:
           method: GET
           path: /auction/{id}
+          cors: true
           authorizer: ${self:custom.authorizer}
     url: true
 
@@ -77,6 +80,7 @@ functions:
       - http:
           method: PATCH
           path: /auction/{id}/bid
+          cors: true
           authorizer: ${self:custom.authorizer}
     url: true
 
@@ -86,6 +90,7 @@ functions:
       - http:
           method: PATCH
           path: /auction/{id}/picture
+          cors: true
           authorizer: ${self:custom.authorizer}
     url: true
 

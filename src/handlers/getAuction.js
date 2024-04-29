@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 import middy from "@middy/core";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
+import cors from "@middy/http-cors";
 import httpEventNormalizer from "@middy/http-event-normalizer";
 import httpErrorHandler from "@middy/http-error-handler";
 import createError from "http-errors";
@@ -44,5 +44,6 @@ async function getAuction(event, context) {
 export const handler = middy(getAuction)
   .use(httpEventNormalizer())
   .use(httpErrorHandler())
+  .use(cors())
 
 
